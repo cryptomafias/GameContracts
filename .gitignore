@@ -1,1 +1,4 @@
 .deps/
+.env
+node_modules/
+build/
