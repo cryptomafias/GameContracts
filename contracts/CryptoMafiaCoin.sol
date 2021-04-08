@@ -27,7 +27,7 @@ contract CryptoMafiaCoin is ERC20, Ownable {
     mapping(uint256=>uint256) roomStake;
     mapping(uint256=>mapping(uint256=>address)) playerID;
     mapping(uint256=>uint256) roomRandomNumber;
-    
+    mapping(uint256=>bool) randomNumIsTaken;
     
     constructor(address accountsHolder, uint256 initialSupply) ERC20("Crypto Mafia Coin Test", "CMC") {
         _mint(_msgSender(), initialSupply);
@@ -69,7 +69,10 @@ contract CryptoMafiaCoin is ERC20, Ownable {
     }
     
     function createRoom(uint256 roomId) public {
-        roomRandomNumber[roomId] = GetRandomNumberCMC();
+        uint256 randomNum = GetRandomNumberCMC();
+        require(randomNumIsTaken[randomNum] != true);
+        roomRandomNumber[roomId] = randomNum;
+        randomNumIsTaken[randomNum] = true;
         RequestRandomNumberCMC(roomId);
     }
     
@@ -100,6 +103,7 @@ contract CryptoMafiaCoin is ERC20, Ownable {
     
     function gameOver(uint256 roomId) public{
         delete roomStake[roomId];
+        delete randomNumIsTaken[roomRandomNumber[roomId]];
     } 
     
     function signUpReward(address userAddress,uint256 amount) public {
