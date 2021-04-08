@@ -9,6 +9,10 @@ interface RandomInterface {
   function randomNumber() external view returns(uint256);
 }
 
+interface AccountInterface{
+    function ownerOf(uint256 tokenId) external view returns (address);
+}
+
 contract CryptoMafiaCoin is ERC20, Ownable {
     address private _accountsHolder;
     
@@ -18,15 +22,27 @@ contract CryptoMafiaCoin is ERC20, Ownable {
     
     RandomInterface RNG;
     
+    AccountInterface AI;
+    
     mapping(uint256=>uint256) roomStake;
     mapping(uint256=>mapping(uint256=>address)) playerID;
+    mapping(uint256=>uint256) roomRandomNumber;
     
     
     constructor(address accountsHolder, uint256 initialSupply) ERC20("Crypto Mafia Coin Test", "CMC") {
         _mint(_msgSender(), initialSupply);
         _accountsHolder = accountsHolder;
-        RNG = RandomInterface(0x3635b24a11E8dE3F2246847cC0c55658344Ae0C7); 
         contractAddress = address(this);
+        RequestRandomNumberCMC(0);
+    }
+    
+    
+    function setAccountAddress(address accountAddress) public {
+        AI = AccountInterface(accountAddress);
+    }
+    
+    function setRandomAddress(address accountAddress) public {
+        RNG = RandomInterface(accountAddress);
     }
 
     modifier onlyAccountsHolder() {
@@ -52,12 +68,19 @@ contract CryptoMafiaCoin is ERC20, Ownable {
         return RNG.randomNumber();
     }
     
+    function createRoom(uint256 roomId) public {
+        roomRandomNumber[roomId] = GetRandomNumberCMC();
+        RequestRandomNumberCMC(roomId);
+    }
     
-    function joinRoom(uint256 roomId, uint256 playerId,uint256 amount) public payable
-    {
-        playerID[roomId][playerId] = msg.sender;
-        transfer(contractAddress,amount);
-        roomStake[roomId] = roomStake[roomId] + amount;
+    function getRandom(uint256 roomId) public view returns(uint256){
+        return roomRandomNumber[roomId];
+    }
+    
+    function joinRoom(uint256 roomId) public payable
+    {   
+        transfer(contractAddress,10);
+        roomStake[roomId] = roomStake[roomId] + 10;
     }
     
     
@@ -69,26 +92,19 @@ contract CryptoMafiaCoin is ERC20, Ownable {
         
         disbursalAmount = roomStake[roomId]/len;
         for (j = 0; j < len; j ++) {  
-            
-            increaseAllowance(playerID[roomId][playerId[j]],disbursalAmount);
-            delete playerID[roomId][playerId[j]];
+            increaseAllowance(AI.ownerOf(playerId[j]),disbursalAmount);
       }
-    }
-    
-    function deductCoins(uint256 roomId, uint256[] memory playerId) public 
-    {
-        uint j;
-        uint len = playerId.length;
-        uint256 deductionAmount;
-        deductionAmount = roomStake[roomId]/8;
-        for (j = 0; j < len; j ++) {  
-            
-            decreaseAllowance(playerID[roomId][playerId[j]],deductionAmount);
-            delete playerID[roomId][playerId[j]];
-      }
+      
+      gameOver(roomId);
     }
     
     function gameOver(uint256 roomId) public{
         delete roomStake[roomId];
     } 
+    
+    function signUpReward(address userAddress,uint256 amount) public {
+        _mint(userAddress,amount);
+    }
+    
+    
 }

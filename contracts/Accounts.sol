@@ -2,15 +2,26 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-
+interface TokenInterface {
+  function signUpReward(address userAddress,uint256 amount) external ;
+}
 // Matic Mumbai: 0xB4341D98e12B6e93dcf231dd615B16d8b208C83c
 contract Accounts is ERC721URIStorage {
     
-    constructor() ERC721("Game Profile Token","GPT"){}
+    TokenInterface TI;
+    
+    constructor() ERC721("Game Profile Token","GPT"){
+        
+    }
     
     function signUp(string memory accountURI, uint256 accountID) external{
         _safeMint(_msgSender(), accountID);
         _setTokenURI(accountID, accountURI);
+        TI.signUpReward(msg.sender, 100);
+    }
+    
+    function AddTIAddress(address tokenAddress) public {
+        TI = TokenInterface(tokenAddress);
     }
     
     function signIn(uint256 accountID) external view returns (string memory){
