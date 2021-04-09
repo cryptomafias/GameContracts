@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 interface RandomInterface {
   function getRandomNumber(uint256 userProvidedSeed) external returns (bytes32);
-  function randomNumber() external view returns(uint256);
+  function randomNumber(uint256 roomId) external view returns(uint256);
 }
 
 interface AccountInterface{
@@ -24,15 +24,12 @@ contract CryptoMafiaCoin is ERC20, Ownable {
     
     AccountInterface AI;
     
-    mapping(uint256=>uint256) roomStake;
-    mapping(uint256=>uint256) roomRandomNumber;
-    mapping(uint256=>bool) randomNumIsTaken;
     
     constructor(address accountsHolder, uint256 initialSupply) ERC20("Crypto Mafia Coin Test", "CMC") {
         _mint(_msgSender(), initialSupply);
         _accountsHolder = accountsHolder;
         contractAddress = address(this);
-        RequestRandomNumberCMC(0);
+        
     }
     
     
@@ -58,52 +55,37 @@ contract CryptoMafiaCoin is ERC20, Ownable {
     }
     
     
-    function RequestRandomNumberCMC(uint256 seed) public returns(bytes32){
+    function RequestRandomNumberCMC() public returns(bytes32){
+        uint256 seed = uint256(blockhash(block.number-1));
         return RNG.getRandomNumber(seed);
         
     }
     
-    function GetRandomNumberCMC() public view returns(uint256) {
-        return RNG.randomNumber();
+    function GetRandomNumberCMC(uint256 roomId) public view returns(uint256) {
+        return RNG.randomNumber(roomId);
     }
     
-    function createRoom(uint256 roomId) public {
-        uint256 randomNum = GetRandomNumberCMC();
-        require(randomNumIsTaken[randomNum] != true);
-        roomRandomNumber[roomId] = randomNum;
-        randomNumIsTaken[randomNum] = true;
-        RequestRandomNumberCMC(roomId);
-    }
-    
-    function getRandom(uint256 roomId) public view returns(uint256){
-        return roomRandomNumber[roomId];
-    }
-    
-    function joinRoom(uint256 roomId) public payable
+
+    function joinRoom() public payable
     {   
         transfer(contractAddress,10);
-        roomStake[roomId] = roomStake[roomId] + 10;
     }
     
     
-    function distributeCoins(uint256 roomId, uint256[] memory playerId) public 
+    function distributeCoins(uint256[] memory playerId) public 
     {
         uint j;
         uint len = playerId.length;
         uint256 disbursalAmount;
         
-        disbursalAmount = roomStake[roomId]/len;
+        disbursalAmount = 80/len;
         for (j = 0; j < len; j ++) {  
             increaseAllowance(AI.ownerOf(playerId[j]),disbursalAmount);
       }
       
-      gameOver(roomId);
+     
     }
     
-    function gameOver(uint256 roomId) public{
-        delete roomStake[roomId];
-        delete randomNumIsTaken[roomRandomNumber[roomId]];
-    } 
     
     function signUpReward(address userAddress,uint256 amount) public {
         _mint(userAddress,amount);

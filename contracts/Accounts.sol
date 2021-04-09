@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 interface TokenInterface {
   function signUpReward(address userAddress,uint256 amount) external ;
 }
-// Matic Mumbai: 0xB4341D98e12B6e93dcf231dd615B16d8b208C83c
+
 contract Accounts is ERC721URIStorage,Ownable {
     
     TokenInterface TI;

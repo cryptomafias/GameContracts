@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.6.0;
 
 import "https://github.com/smartcontractkit/chainlink/blob/master/evm-contracts/src/v0.6/VRFConsumerBase.sol";
@@ -8,9 +9,12 @@ contract RandomGenerator is VRFConsumerBase  {
     bytes32 internal keyHash;
     uint256 internal fee;
     
-    uint256 public randomResult;
+    mapping (uint256=>uint256) randomResult; //room number to random number
     
     address private _owner;
+
+    mapping(bytes32=>uint256) roomRequest; //request ID to room number
+    
 
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
@@ -61,10 +65,10 @@ contract RandomGenerator is VRFConsumerBase  {
      */
      
     function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
-        randomResult = randomness;
+        randomResult[roomRequest[requestId]] = randomness;
 }
 
-    function randomNumber() public view returns(uint256){
-        return randomResult;
+    function randomNumber(uint256 roomNumber) public view returns(uint256){
+        return randomResult[roomNumber];
     }
 }
