@@ -2,6 +2,7 @@ pragma solidity ^0.6.0;
 
 import "https://github.com/smartcontractkit/chainlink/blob/master/evm-contracts/src/v0.6/VRFConsumerBase.sol";
 
+
 contract RandomGenerator is VRFConsumerBase  {
     
     bytes32 internal keyHash;
@@ -9,6 +10,10 @@ contract RandomGenerator is VRFConsumerBase  {
     
     uint256 public randomResult;
     
+    address private _owner;
+
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
     /**
      * Constructor inherits VRFConsumerBase
      * 
@@ -25,6 +30,25 @@ contract RandomGenerator is VRFConsumerBase  {
     {
         keyHash = 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4;
         fee = 0.0001 * 10 ** 18; // 0.0001 LINK (varies by network)
+        address msgSender = msg.sender;
+        _owner = msgSender;
+        emit OwnershipTransferred(address(0), msgSender);
+    }
+    
+    modifier onlyOwner() {
+        require(_owner == msg.sender, "Ownable: caller is not the owner");
+        _;
+    }
+    
+    function renounceOwnership() public virtual onlyOwner {
+        emit OwnershipTransferred(_owner, address(0));
+        _owner = address(0);
+    }
+    
+    function transferOwnership(address newOwner) public virtual onlyOwner {
+        require(newOwner != address(0), "Ownable: new owner is the zero address");
+        emit OwnershipTransferred(_owner, newOwner);
+        _owner = newOwner;
     }
     
     function getRandomNumber(uint256 userProvidedSeed) public returns (bytes32 requestId) {

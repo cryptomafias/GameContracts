@@ -25,7 +25,6 @@ contract CryptoMafiaCoin is ERC20, Ownable {
     AccountInterface AI;
     
     mapping(uint256=>uint256) roomStake;
-    mapping(uint256=>mapping(uint256=>address)) playerID;
     mapping(uint256=>uint256) roomRandomNumber;
     mapping(uint256=>bool) randomNumIsTaken;
     
@@ -37,11 +36,11 @@ contract CryptoMafiaCoin is ERC20, Ownable {
     }
     
     
-    function setAccountAddress(address accountAddress) public {
+    function setAccountAddress(address accountAddress) public onlyOwner{
         AI = AccountInterface(accountAddress);
     }
     
-    function setRandomAddress(address accountAddress) public {
+    function setRandomAddress(address accountAddress) public onlyOwner{
         RNG = RandomInterface(accountAddress);
     }
 

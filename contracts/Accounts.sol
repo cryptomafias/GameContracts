@@ -2,11 +2,12 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 interface TokenInterface {
   function signUpReward(address userAddress,uint256 amount) external ;
 }
 // Matic Mumbai: 0xB4341D98e12B6e93dcf231dd615B16d8b208C83c
-contract Accounts is ERC721URIStorage {
+contract Accounts is ERC721URIStorage,Ownable {
     
     TokenInterface TI;
     
@@ -20,7 +21,7 @@ contract Accounts is ERC721URIStorage {
         TI.signUpReward(msg.sender, 100);
     }
     
-    function AddTIAddress(address tokenAddress) public {
+    function AddTIAddress(address tokenAddress) public onlyOwner{
         TI = TokenInterface(tokenAddress);
     }
     
