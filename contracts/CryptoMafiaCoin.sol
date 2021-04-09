@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 interface RandomInterface {
+
   function getRandomNumber(uint256 seed,uint256 roomId) external returns (bytes32);
   function randomNumber(uint256 roomId) external view returns(uint256);
 }
@@ -24,23 +25,25 @@ contract CryptoMafiaCoin is ERC20, Ownable {
     
     AccountInterface AI;
     
-    
     address gameMaster;
     
     
     constructor(uint256 initialSupply) ERC20("Crypto Mafia Coin Test", "CMC") {
         _mint(_msgSender(), initialSupply);
         contractAddress = address(this);
+
     }
     
     
     function setAccountAddress(address accountAddress) public onlyOwner{
         AI = AccountInterface(accountAddress);
+
         _accountsHolder = accountAddress;
     }
     
     function setRandomAddress(address accountAddress) public onlyOwner{
         RNG = RandomInterface(accountAddress);
+
     }
     
     function setGameMasterAddress(address accountAddress) public onlyOwner{
@@ -62,9 +65,11 @@ contract CryptoMafiaCoin is ERC20, Ownable {
     }
     
     
+
     function RequestRandomNumberCMC(uint256 roomId) public returns(bytes32){
         uint256 seed = uint256(blockhash(block.number-1));
         return RNG.getRandomNumber(seed,roomId);
+
         
     }
     
@@ -79,7 +84,9 @@ contract CryptoMafiaCoin is ERC20, Ownable {
     }
     
     
+
     function distributeCoins(uint256[] memory playerId) public onlyGameMaster
+
     {
         uint j;
         uint len = playerId.length;
