@@ -31,7 +31,6 @@ contract CryptoMafiaCoin is ERC20, Ownable {
     constructor(uint256 initialSupply) ERC20("Crypto Mafia Coin Test", "CMC") {
         _mint(_msgSender(), initialSupply);
         contractAddress = address(this);
-        gameMaster = msg.sender;
     }
     
     
@@ -42,6 +41,10 @@ contract CryptoMafiaCoin is ERC20, Ownable {
     
     function setRandomAddress(address accountAddress) public onlyOwner{
         RNG = RandomInterface(accountAddress);
+    }
+    
+    function setGameMasterAddress(address accountAddress) public onlyOwner{
+        gameMaster = accountAddress;
     }
 
     modifier onlyAccountsHolder() {
