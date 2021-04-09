@@ -4,7 +4,8 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 interface TokenInterface {
-  function _mint(address userAddress,uint256 amount) external ;
+
+  function mint(address userAddress,uint256 amount) external ;  
 }
 
 contract Accounts is ERC721URIStorage,Ownable {
@@ -18,7 +19,8 @@ contract Accounts is ERC721URIStorage,Ownable {
     function signUp(string memory accountURI, uint256 accountID) external{
         _safeMint(_msgSender(), accountID);
         _setTokenURI(accountID, accountURI);
-        TI._mint(msg.sender, 100);
+
+        TI.mint(msg.sender, 100);
     }
     
     function AddTIAddress(address tokenAddress) public onlyOwner{
