@@ -87,9 +87,4 @@ contract CryptoMafiaCoin is ERC20, Ownable {
     }
     
     
-    function signUpReward(address userAddress,uint256 amount) public {
-        _mint(userAddress,amount);
-    }
-    
-    
 }

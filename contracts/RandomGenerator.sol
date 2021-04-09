@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.6.0;
 
-import "https://github.com/smartcontractkit/chainlink/blob/master/evm-contracts/src/v0.6/VRFConsumerBase.sol";
+import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
 
 
 contract RandomGenerator is VRFConsumerBase  {
@@ -71,4 +71,6 @@ contract RandomGenerator is VRFConsumerBase  {
     function randomNumber(uint256 roomNumber) public view returns(uint256){
         return randomResult[roomNumber];
     }
+    
+    
 }
