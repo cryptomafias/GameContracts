@@ -1,3 +1,3 @@
-# GameContracts
+## Accounts Contract
 
-This repo would contain all the smart contracts for the game
+This contract generates user profile NFTs using ERC721 standard when the user first Registers on the game. This contract is also responsible for allotting the Sign Up rewards to the players from our Game Tokens.
